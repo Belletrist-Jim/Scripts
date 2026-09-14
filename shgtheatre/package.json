@@ -1,0 +1,12 @@
+{
+  "name": "shgtheatre-tickets",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "上海大剧院(shgtheatre.com)在线购票抢座工具：config.yaml -> 油猴用户脚本",
+  "scripts": {
+    "build": "./build.sh build",
+    "serve": "./build.sh serve"
+  },
+  "dependencies": {}
+}

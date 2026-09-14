@@ -1,0 +1,15 @@
+{
+  "name": "shsymphony-tickets",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "上海交响乐团抢票工具集：preorder(多场次预售套票) + single-concert(单场选座)。入口见 build.sh",
+  "scripts": {
+    "build": "./build.sh all",
+    "build:preorder": "./build.sh preorder",
+    "build:single": "./build.sh single-concert"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

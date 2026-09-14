@@ -1,0 +1,53 @@
+# ============================================================
+# 上海交响乐团 · 单场“选座”页自动抢座配置
+# 改完本文件后在根目录运行：  ./build.sh single-concert
+# 会生成 single-concert.user.js —— 用油猴(Tampermonkey)安装一次即可；开票页一打开脚本即就绪。
+#
+# 适用页面（登录后、带 pk/sk 的选座页）：
+#   https://www.shsymphony.cn/symphonypc/index.html#/zh-CN/pc/seat?id=1646&supportSeat=Y&pk=...&sk=...
+#
+# 运行时 scheduleId(id) / programKey(pk) / sessionKey(sk) 都自动从当前页面 URL 读取，
+# 一般无需在此填写；下面 scheduleId 仅用于 `--live` 联网校验时指定场次。
+# ============================================================
+
+# —— 可选项 ——
+# scheduleId: 1646     # 仅用于 ./build.sh single-concert --live 联网校验（联网还需 SHS_COOKIE / cookies.txt）
+# mobile: ""           # 非实名场次可留空；如需回填取票短信手机号可填 11 位号码
+dryRun: false          # true = 只预演打印候选、绝不真正锁座；抢票时请保持 false
+autoRun: true          # true = 选座页一加载好就自动抢座(零点击，专治开票后再操作太迟)；会真实下单，付款仍需手动
+submitOrder: true      # true = 提交 order/create 生成待付款订单并真正占座；false = 只自动选中座位
+maxRetryPerRule: 5     # 单条规则被抢座后自动“刷新库存→重挑”的最多次数
+
+# —— 备选链 ——
+# rules 是一个“有序备选链”：从上往下依次尝试，第一条成功锁到座位即停止。
+# 每条：
+#   price 票价（按数值匹配该场价位，如 80 / 100 / 180）
+#   qty   数量（张数，不超过该场单笔上限，通常 ≤4）
+#   areas 区域偏好（区域字母列表，按顺序尝试；如 [J, C, D]）
+#
+# 选座规则（已写死进引擎，无需配置）：
+#   1) 区域优先：按 areas 顺序逐区尝试，本区凑不齐才换下一区。
+#   2) 连坐优先：先找“同排连坐”，本区连坐都没有才找“上下排紧挨”。
+#   3) A/C/J 区不分左右，越靠近中心（座号越小）越好；
+#      B/D/E/F/G/H/I 区分左右，优先右边（双号），其次左边（单号）。
+#   4) 排序：A/G/H/I/J 区从 3 排起往后（3,4,5…），再 2 排、1 排；
+#      其余区从第 1 排起升序。同排/同组内座号越小越靠中心越好。
+rules:
+  - price: 280
+    qty: 4
+    areas: [A,B,F,J,C,D,I,E,H,G]
+  - price: 280
+    qty: 3
+    areas: [A,B,F,J,C,D,I,E,H,G]
+  - price: 280
+    qty: 2
+    areas: [A,B,F,J,C,D,I,E,H,G]
+  - price: 280
+    qty: 1
+    areas: [A,B,F,J,C,D,I,E,H,G]
+  - price: 480
+    qty: 2
+    areas: [A,B,F,J,C,D,I,E,H,G]
+  - price: 480
+    qty: 1
+    areas: [A,B,F,J,C,D,I,E,H,G]

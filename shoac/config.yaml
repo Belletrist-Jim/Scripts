@@ -1,0 +1,48 @@
+# ============================================================
+# 上海东方艺术中心(shoac.com.cn) · 选座页自动抢座配置
+# 改完本文件后在目录里运行：  ./build.sh build
+# 会生成 shoac.user.js —— 用油猴(Tampermonkey)安装一次即可。
+#
+# 适用页面（登录后、进入某场次的“在线选座”页）：
+#   https://www.shoac.com.cn/#/selectPurchase/selectSeat?productId=...&showId=...&sectionId=...
+#   进入方式：官网 → 演出详情页 → 选场次 →「选座购买」。
+#   productId / showId / sectionId 脚本会自动从 URL 读取，不用手填。
+# ============================================================
+
+# —— 开关 ——
+dryRun: false            # true = 只预演(打印会挑哪些座)，绝不下单；抢票时保持 false
+autoRun: true           # true = 选座页一打开就自动抢座(零点击)。会真实锁座，需你手动去付款
+submitOrder: true        # true = 真正调用锁座接口；false = 只算好座位不提交
+maxRetry: 4              # 座位被抢走时，自动“刷新 → 重挑”的轮数
+mode: auto               # auto = 需要滑块就自动改用“网页点选”方式(你滑一下)；api = 只走接口；dom = 只走网页点选
+jumpToOrder: true        # 锁座成功自动跳到“提交订单”页
+autoSwitchSection: true  # 当前分区没票时，自动换到有票的分区再抢
+rowPreference: middle    # 同价位内的选排偏好：front(前排优先) / middle(中间排) / back(后排优先)
+
+# —— 备选链 ——
+# rules 从前往后试，第一条能凑齐就下单。
+#   price 票价（必须是该场真实价位，选座页点“自检/库存”能看到）
+#   qty   张数
+#   areas 区域偏好，留空 [] = 不限；也可以写座位描述里的片段，按顺序优先，
+#         例如 ["1楼","乐池"] 或 ["A区","B区"]（座位描述形如 “1楼乐池特2排21座”）
+rules:
+  - price: 480
+    qty: 2
+    areas: []
+  - price: 380
+    qty: 2
+    areas: []
+  - price: 280
+    qty: 1
+    areas: []
+
+# —— 开票监控（可选，用在“演出详情页”上）——
+# 开票瞬间详情页的场次按钮才会变可点。打开后脚本会在详情页盯着，
+# 目标场次一开卖就自动进选座页，再由上面的 rules 抢座（配 autoRun: true 即全自动）。
+watch:
+  enabled: false
+  showId: ""             # 指定场次 id（最准：选座页 URL 里的 showId）
+  date: ""               # 或按日期，如 "2026.11.11"
+  time: ""               # 再按开演时间筛，如 "19:15"
+  startAt: ""            # 开抢时间(本机)，如 "2026-10-01 10:00:00"；留空=立刻开始盯
+  pollMs: 1500           # 轮询间隔(毫秒)

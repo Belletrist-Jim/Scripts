@@ -1,0 +1,12 @@
+{
+  "name": "shcs-tickets",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "上海文化广场(shcstheatre.com)选座抢票 + 余票监控（无依赖，直接用 node 构建）",
+  "scripts": {
+    "build": "./build.sh build",
+    "serve": "./build.sh serve"
+  },
+  "dependencies": {}
+}
